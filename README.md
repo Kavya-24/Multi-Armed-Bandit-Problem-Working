@@ -140,18 +140,16 @@ Same ten machines, 1,000 pulls, 400 simulated runs each:
 | UCB1 | 58 | 100 | **159** |
 | Thompson sampling | 35 | 46 | **54** |
 
-Thompson wins, as advertised. But **UCB1 came dead last — worse than plain greedy.** That
-is not the story the textbooks tell, and it's not what I expected when I wrote the
-simulation.
+Thompson wins, as advertised. But **UCB1 came dead last — worse than plain greedy**, which
+inverts the tidy "dumbest to smartest" ordering from §4.
 
-It's also not a bug. UCB1's exploration bonus is `sqrt(2 ln t / n)`. At t = 1,000 with a
-machine pulled 100 times, that bonus is about **0.37** — while the actual gap between the
-best machine (60%) and the runner-up (45%) is only **0.15**. The bonus is more than twice
-the size of the thing it's supposed to detect, so UCB1 is still dutifully sampling
-machines it has plenty of evidence against. It hasn't converged. It's mid-sentence and
-we're grading the paragraph.
+It isn't a bug: UCB1 hasn't finished. To rule an arm out it needs pulls proportional to
+`1/Δ²`, the inverse square of that arm's gap. The runner-up M8 sits just 0.15 below the
+best machine, and closing a gap that narrow takes **around 600 pulls of M8 alone** — most
+of a 1,000-pull budget, for one machine out of ten. UCB1 spends the whole game still
+auditing.
 
-The honest fix isn't to hide the result — it's to run the experiment for longer.
+So the table isn't a verdict on UCB1. It's a verdict on the horizon.
 
 ---
 
@@ -304,7 +302,7 @@ These are honest results from **one testbed**, and the ranking is not a universa
   gets harder and slower, UCB1 especially.
 - UCB1 here is the textbook version with the constant 2, which is known to be conservative.
   Tuned variants (UCB-V, KL-UCB, or simply a smaller constant) close most of the gap to
-  Thompson at short horizons. §5 is a fair critique of *this* formula, not of the idea.
+  Thompson at short horizons. §5 is about *this* formula's pace, not the idea behind it.
 - ε-greedy is run at a fixed ε=0.1. A *decaying* ε gets you sublinear regret and would bend
   like the other two — the flat 10% tax in §6 is a consequence of the fixed setting, not of
   the algorithm family.
